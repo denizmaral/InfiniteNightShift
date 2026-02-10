@@ -1,0 +1,4 @@
+module CoreBrightnessShim {
+    header "CBBlueLightClient.h"
+    export *
+}
