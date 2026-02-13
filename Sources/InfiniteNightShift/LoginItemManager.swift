@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import os
 import ServiceManagement
@@ -37,7 +38,13 @@ final class LoginItemManager: ObservableObject {
         do {
             if enabled {
                 try SMAppService.mainApp.register()
-                Self.logger.info("Login item registered successfully")
+                let actualStatus = SMAppService.mainApp.status
+                Self.logger.info("Login item registered, actual status: \(actualStatus.rawValue)")
+
+                if actualStatus == .requiresApproval {
+                    Self.logger.info("Login item requires user approval in System Settings")
+                    openLoginItemsSettings()
+                }
             } else {
                 try SMAppService.mainApp.unregister()
                 Self.logger.info("Login item unregistered successfully")
@@ -47,6 +54,12 @@ final class LoginItemManager: ObservableObject {
             // Revert UI state to match actual system state
             let actualStatus = SMAppService.mainApp.status
             isEnabled = (actualStatus == .enabled)
+        }
+    }
+
+    private func openLoginItemsSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension") {
+            NSWorkspace.shared.open(url)
         }
     }
 }
