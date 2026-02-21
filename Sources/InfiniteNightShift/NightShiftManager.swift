@@ -36,6 +36,7 @@ final class NightShiftManager: ObservableObject {
         timer?.invalidate()
         timer = nil
         client.setStatusNotificationBlock(nil)
+        client.setEnabled(false)
     }
 
     private func enableNightShift() {
